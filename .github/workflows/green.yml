@@ -1,0 +1,28 @@
+name: Keep Green
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # 08:00 WIB
+    - cron: '0 3 * * *'   # 11:00 WIB
+    - cron: '0 6 * * *'   # 14:00 WIB
+    - cron: '0 9 * * *'   # 17:00 WIB
+    - cron: '0 12 * * *'  # 20:00 WIB
+  workflow_dispatch:
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update README
+        run: |
+          sed -i "s/^Last updated: .*/Last updated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')/" README.md
+
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add README.md
+          git diff --staged --quiet || git commit -m "chore: keep green 🌿 [skip ci]"
+          git push
